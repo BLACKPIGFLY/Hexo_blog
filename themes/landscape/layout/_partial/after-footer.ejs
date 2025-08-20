@@ -1,0 +1,150 @@
+<% if (theme.disqus_shortname){ %>
+<script>
+  var disqus_shortname = '<%= theme.disqus_shortname %>';
+  <% if (page.permalink){ %>
+  var disqus_url = '<%= page.permalink %>';
+  <% } %>
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.async = true;
+    dsq.src = 'https://' + disqus_shortname + '.disqus.com/<% if (page.comments) { %>embed.js<% } else { %>count.js<% } %>';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+<% } %>
+
+<%- js('js/jquery-3.6.4.min.js') %>
+
+<% if (theme.fancybox){ %>
+  <%- js('fancybox/jquery.fancybox.min.js') %>
+<% } %>
+
+<%- js('js/script') %>
+<%- partial('gauges-analytics') %>
+
+<% if(theme.valine.enable && theme.valine.appId && theme.valine.appKey){ %>
+  <%- js('https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js') %>
+<script>
+    var GUEST_INFO = ['nick','mail','link'];
+    var guest_info = '<%= theme.valine.guest_info %>'.split(',').filter(function(item){
+        return GUEST_INFO.indexOf(item) > -1
+    });
+    var notify = '<%= theme.valine.notify %>' == true;
+    var verify = '<%= theme.valine.verify %>' == true;
+    new Valine({
+        el: '.vcomment',
+        notify: notify,
+        verify: verify,
+        appId: "<%= theme.valine.appId %>",
+        appKey: "<%= theme.valine.appKey %>",
+        placeholder: "<%= theme.valine.placeholder %>",
+        pageSize:'<%= theme.valine.pageSize %>',
+        avatar:'<%= theme.valine.avatar %>',
+        lang:'<%= theme.valine.lang %>'
+    });
+</script>
+<% } %>
+
+
+<script type="text/javascript">
+    /*L2Dwidget.init({
+        "pluginRootPath": "live2d-widget/",
+        "pluginJsPath": "lib/",
+        "pluginModelPath": "assets/",
+        "model": {
+            // 这里就是配置您自己的模型！
+            // 请确保路径和您在 source/models/ 中存放的文件夹和文件名一致
+            //"jsonPath": "https://unpkg.com/live2d-widget-model-shizuku@1.0.5/assets/shizuku.model.json",
+            //"jsonPath": "models/live2d-widget-model-z16/assets/z16.model.json",
+            "jsonPath": "/models/huohuo2/huohuo/huohuo.model3.json",
+            "scale": 1
+        },
+        "display": {
+            "position": "right", // 位置，可以是 'left' 或 'right'
+            "width": 150,
+            "height": 300,
+            "hOffset": 10,     // 水平偏移
+            "vOffset": -20     // 垂直偏移
+        },
+        "mobile": {
+            "show": true,      // 在手机上显示
+            "scale": 0.5
+        },
+        "dialog": {
+            "enable": true,    // 开启对话框
+            "hitokoto": false  // 关闭它自带的“一言”功能，以便使用我们自己的API
+        },
+        "api": {
+            // 连接到您后续将在 Vercel 上部署的对话 API
+            "chat": {
+                "url": "/api/chat"
+            }
+        },
+        "log": false
+    });*/
+</script> 
+<script>
+    const cdnPath = "/live2d/";
+    const config = {
+      // 资源路径
+      path: {
+        homePath: '/',
+        modelPath: cdnPath + "/Resources/",
+        cssPath: cdnPath + "/waifu.css",
+        tipsJsonPath: cdnPath + "/waifu-tips.json",
+        tipsJsPath: cdnPath + "/waifu-tips.js",
+        live2dCorePath: cdnPath + "/Core/live2dcubismcore.js",
+        live2dSdkPath: cdnPath + "/live2d-sdk.js"
+      },
+      // 工具栏
+      tools: ["hitokoto", "asteroids", "express", "switch-model", "switch-texture", "photo", "info", "quit"],
+      // 模型拖拽
+      drag: {
+        enable: true,
+        direction: ["x", "y"]
+      },
+      // 模型切换(order: 顺序切换，random: 随机切换)
+      switchType: "order"
+    }
+  
+    // 加载资源并初始化
+    if (screen.width >= 768) {
+      Promise.all([
+        loadExternalResource(config.path.cssPath, "css"),
+        loadExternalResource(config.path.live2dCorePath, "js"),
+        loadExternalResource(config.path.live2dSdkPath, "js"),
+        loadExternalResource(config.path.tipsJsPath, "js")
+      ]).then(() => {
+        initWidget({
+          homePath: config.path.homePath,
+          waifuPath: config.path.tipsJsonPath,
+          cdnPath: config.path.modelPath,
+          tools: config.tools,
+          dragEnable: config.drag.enable,
+          dragDirection: config.drag.direction,
+          switchType: config.switchType
+        });
+      });
+    }
+  
+    // 异步加载资源
+    function loadExternalResource(url, type) {
+      return new Promise((resolve, reject) => {
+        let tag;
+        if (type === "css") {
+          tag = document.createElement("link");
+          tag.rel = "stylesheet";
+          tag.href = url;
+        }
+        else if (type === "js") {
+          tag = document.createElement("script");
+          tag.src = url;
+        }
+        if (tag) {
+          tag.onload = () => resolve(url);
+          tag.onerror = () => reject(url);
+          document.head.appendChild(tag);
+        }
+      });
+    }
+  </script>
