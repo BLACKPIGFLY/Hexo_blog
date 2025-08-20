@@ -1,1 +1,1 @@
-**"My_Hexo_blog" **
+*"My_Hexo_blog"*
